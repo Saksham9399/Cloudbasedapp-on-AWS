@@ -1,0 +1,83 @@
+<!--Created By Saksham Agarwal- 19323666-->
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Cloud Application Assignment 2</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12"></script>
+    <script src="https://sdk.amazonaws.com/js/aws-sdk-2.804.0.min.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        <h1>Welcome to Movie Predictor by Amazon AWS</h1>
+        <h2>CSU 44000 - Internet Applications:</h2>
+        <h3> By:- Saksham Agarwal</h3>
+        <h4>Date/Time: <span id="datetime"></span></h4>
+        <button v-on:click="Create">Create Database</button><br>
+        Enter Title: <input v-model="title"> Enter Year: <input v-model="year"> <button v-on:click="Query(year, title)">Query</button><br>
+        <button v-on:click="Destroy">Delete Database</button><br>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Movie</th>
+                <th>Year</th>
+                <th>Rating</th>
+                <th>Release Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr v-for="row in responseList">
+                <td v-for="item in row">
+                    {{item}}
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    </div>
+
+    <script>
+        var app = new Vue({
+            el: "#app",
+            data: {
+                title:'',
+                year:'',
+                responseList : [],
+            },
+            methods: {
+                Create: create,
+                Destroy: destroy,
+                Query: query
+            }
+        })
+        var dt = new Date();
+        document.getElementById("datetime").innerHTML = (("0"+dt.getDate()).slice(-2)) +"."+ (("0"+(dt.getMonth()+1)).slice(-2)) +"."+ (dt.getFullYear()) +" "+ (("0"+dt.getHours()).slice(-2)) +":"+ (("0"+dt.getMinutes()).slice(-2));
+        
+        function create() {
+            let prom = fetch('/create', {method:'POST'})
+            prom.then(response => response.json())
+                .then(response => {
+                })
+        }
+
+        function query(year, title) {
+            let prom = fetch('/query/'+title+'/'+year, {method:'POST'})
+            prom.then(response => response.json())
+                .then(response => {
+                    this.responseList = response.myList
+                })
+        }
+
+        function destroy(){
+            let prom = fetch('/destroy', {method:'POST'})
+            prom.then(response => response.json())
+                .then(response => {
+                })
+        }
+
+
+    </script>
+</body>
+
+</html>
